@@ -1,8 +1,8 @@
 # psp-adhoc-proxy
 AdHoc Proxy for PSP connection
+##
 
-
-### Few word of mine, what is a thing I'm working on
+## Few word of mine, what is a thing I'm working on
 This is my attempt of creating infrastructure through AdHoc. I doing it to play Patapon 3 online.
 Since PSP servers are down for a long time and will never be up again, I'm creating my own using the only possible way to communicate consoles.
 
