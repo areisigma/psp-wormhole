@@ -1,6 +1,5 @@
-﻿#include <iostream>
+#include <iostream>
 #include <adhoc.h>
-#include <wlanapi.h>
 
 
 struct adhocNetworkInit {
@@ -15,19 +14,29 @@ struct adhocNetworkInit {
 
 int main() {
 
-	IDot11AdHocManager *adhocManager = 0;
-	IDot11AdHocSecuritySettings *adhocSec = 0;
-	IDot11AdHocNetwork *adhocNetwork = 0;
+	printf("[*] Defining interfaces\n");
+
+	IDot11AdHocManager *adhocManager;
+	adhocManager = (IDot11AdHocManager*)std::malloc(sizeof(IDot11AdHocManager));
+
+	IDot11AdHocSecuritySettings *adhocSec;
+	adhocSec = (IDot11AdHocSecuritySettings*)std::malloc(sizeof(IDot11AdHocSecuritySettings));
+
+	IDot11AdHocNetwork *adhocNetwork;
+	adhocNetwork = (IDot11AdHocNetwork*)std::malloc(sizeof(IDot11AdHocNetwork));
+
 																// I don't know
-	DOT11_ADHOC_AUTH_ALGORITHM *authAlgo = 0;
-	*authAlgo = DOT11_ADHOC_AUTH_ALGO_80211_OPEN;
+	printf("[*] Setting authentication algorythm\n");
+
+	DOT11_ADHOC_AUTH_ALGORITHM *authAlgo = (tagDOT11_ADHOC_AUTH_ALGORITHM *)DOT11_ADHOC_AUTH_ALGO_80211_OPEN;
+	//*authAlgo = DOT11_ADHOC_AUTH_ALGO_80211_OPEN;
 
 	// Setting authentication algorithm
 	if (adhocSec->GetDot11AuthAlgorithm(authAlgo) == S_OK) {
-		printf("[+] Auth -> OK");
+		printf("[+] Auth -> OK\n");
 	}
 	else {
-		printf("[!] adhocAuth Failed");
+		printf("[!] adhocAuth Failed\n");
 	}
 
 	// Struct with basic information of Ad Hoc Network
@@ -43,17 +52,20 @@ int main() {
 
 	// Some creation of network
 	if (adhocManager->CreateNetwork(net.name, net.pass, net.geo, net.intf, net.sec, net.contextGuid, net.iAdHoc) == S_OK) {
-		printf("[+] Network created");
+		printf("[+] Network created\n");
 	}
 	else {
-		printf("[!] Creating network failed");
+		printf("[!] Creating network failed\n");
 	}
 
 	DOT11_ADHOC_NETWORK_CONNECTION_STATUS *adhocNetworkStatus = 0;
 
-	printf("%d", adhocNetwork->GetStatus(adhocNetworkStatus));
+	printf("%d\n", adhocNetwork->GetStatus(adhocNetworkStatus));
 
 
+	std::free(adhocManager);
+	std::free(adhocNetwork);
+	std::free(adhocSec);
 
 	return 1;
 }
