@@ -1,0 +1,4 @@
+﻿psp_wormhole.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp__getnameinfo@28 przywołany w funkcji "char * __cdecl ip6tos(struct sockaddr *,char *,int)" (?ip6tos@@YAPADPAUsockaddr@@PADH@Z)
+psp_wormhole.obj : error LNK2019: nierozpoznany zewnętrzny symbol _pcap_freealldevs przywołany w funkcji _main
+psp_wormhole.obj : error LNK2019: nierozpoznany zewnętrzny symbol _pcap_findalldevs_ex przywołany w funkcji _main
+C:\Users\olaf\Desktop\psp_wormhole\psp_wormhole\Debug\psp_wormhole.exe : fatal error LNK1120: liczba nierozpoznanych elementów zewnętrznych: 3

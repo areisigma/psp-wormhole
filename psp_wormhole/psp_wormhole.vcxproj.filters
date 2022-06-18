@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Pliki źródłowe">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Pliki zasobów">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\pcap">
+      <UniqueIdentifier>{147cba29-df17-47bd-8678-793d0a9b9105}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="psp_wormhole.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Packet32.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap-bpf.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap-namedb.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\bluetooth.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\bpf.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\can_socketcan.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\compiler-tests.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\dlt.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\funcattrs.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\ipnet.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\namedb.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\nflog.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\pcap.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\pcap-inttypes.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\sll.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\socket.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\usb.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+    <ClInclude Include="pcap\vlan.h">
+      <Filter>Pliki nagłówkowe\pcap</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
