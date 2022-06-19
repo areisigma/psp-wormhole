@@ -10,11 +10,11 @@ This is my attempt of creating infrastructure through AdHoc. I doing it to play 
 Since PSP servers are down for a long time and will never be up again, I'm creating my own using the only possible way to communicate consoles.
 ##
 ### What's the plan?
-So there is this AdHoc system. I'm diggin deep inside it to find a way to connect it to PC and then use a computer as proxy server.
+So there is this Ad Hoc system. I'm diggin deep inside it to find a way to connect it to PC and then use a computer as proxy server.
 Then proxy will send all traffic to defined server (a player who will host a session).
 This solve won't be efficient, since program will send broadcastly (?) to every player. (Yeah I think i will solve it later, firstly I will connect two devices)
 ##
-### Actual implementation
-I know that PSP_Proxy.cpp doesn't seem to be the proxy yet. It's because I'm learning about AdHoc protocol on low level.
-There's no technical documentation (I didn't found any), thus I'm reversing it, learning about it from scrath, from back.
-There will be some code in a while.
+### What direction this project is moving in?
+I ended up using Npcap c++ architecture. It's more understandable to me than writing my own driver for network card.
+Application scans available network interfaces, user must choose wireless adapter. Then the adapter is opened and is capturing packets.
+The problem is every user need network card, that can be set in promiscuous/monitor mode. Since not every adapter can be set to monitor, I have to implement associaton with Ad Hoc network. I know my only monitor-mode adapter can actually be set to monitor mode, not only promiscuous. Even now I cannot see every packet, so I think i didn't put it in monitor, but promiscuous mode and now I see packets from other other devices from my local network.
