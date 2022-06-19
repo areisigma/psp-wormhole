@@ -53,6 +53,7 @@ void ifprint(pcap_if_t *d);
 char *iptos(u_long in);
 char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen);
 void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data);
+void dump(const u_char *buffer, const u_int len);
 
 
 // Print available devices.
@@ -76,6 +77,7 @@ int main(int argc, char *argv[]) {
 	if (!LoadNpcapDlls())
 	{
 		fprintf(stderr, "[!] Couldn't load Npcap\n");
+		system("pause");
 		exit(1);
 	}
 
@@ -83,6 +85,7 @@ int main(int argc, char *argv[]) {
 	if (pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
 		fprintf(stderr, "[!] Error in pcap_findalldevs: %s\n", errbuf);
+		system("pause");
 		exit(1);
 	}
 
@@ -113,6 +116,13 @@ int main(int argc, char *argv[]) {
 	)) == NULL)
 	{
 		fprintf(stderr, "\n[!] Unable to open the adapter.");
+		system("pause");
+	}
+
+	// Set monitor mode
+	if (pcap_set_rfmon(aHandle, 1) != 0)
+	{
+		printf("[-] Monitor mode not enabled!\n");
 	}
 
 	// Check link layer, supporting only ethernet
@@ -121,20 +131,22 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "\n[!] This program works only on Ethernet networks\n");
 		pcap_freealldevs(alldevs);
 		pcap_close(aHandle);
+		system("pause");
 		exit(1);
 	}
 
 	// Retrieve mask of selected network adapter
 	if (d->addresses == NULL)
 	{
-		printf("[!] Device struct is NULL, cannot assign netmask");
+		printf("[!] Device struct is NULL, cannot assign netmask\n");
 		pcap_freealldevs(alldevs);
 		pcap_close(aHandle);
+		system("pause");
 		exit(1);
 	}
 
 	netmask = ((struct sockaddr_in *)(d->addresses->netmask))->sin_addr.S_un.S_addr;
-	printf("[+] Netmask assigned");
+	printf("[+] Netmask assigned\n");
 
 	// Compile the filter
 	if ((result = pcap_compile(aHandle, &fcode, "", 1, netmask)) < 0) //wlan.ssid == PSP_AUCES01421_L_LABOMAT
@@ -142,6 +154,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "\n[!] Error compiling filter: %s\n", pcap_statustostr(result));
 		pcap_freealldevs(alldevs);
 		pcap_close(aHandle);
+		system("pause");
 		exit(1);
 	}
 
@@ -151,9 +164,9 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "\n[!] Error setting the filter: %s\n", pcap_statustostr(result));
 		pcap_freealldevs(alldevs);
 		pcap_close(aHandle);
+		system("pause");
 		exit(1);
 	}
-
 
 	// Start capturing
 	pcap_loop(aHandle, 0, packet_handler, NULL);
@@ -186,11 +199,37 @@ void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_cha
 	time_t local_tv_sec;
 
 	(VOID)(param);
-	printf("\nNew packet\n");
+	printf("\n\nNew packet\n");
 	printf("len: %d\n", header->len);
-	printf("data: %s", pkt_data);
+	dump(pkt_data, sizeof(pkt_data));
 }
 
+
+void dump(const u_char *buffer, const u_int len)
+{
+	u_char byte;
+	u_int i, j;
+	for (i = 0; i < len; i++)
+	{
+		byte = buffer[i];
+		printf("%02x ", buffer[i]);
+		if (((i % 16) == 15) || (i == len - 1))
+		{
+			for (j = 0; j < 15 - (i % 16); j++)
+				printf("  ");
+			printf("|  ");
+			for (j = (i - (i % 16)); j <= i; j++)
+			{
+				byte = buffer[j];
+				if ((byte > 31) && (byte < 127))
+					printf("%c", byte);
+				else
+					printf(".");
+			}
+			printf("\n");
+		}
+	}
+}
 
 // Print all the available information on the given interface 
 void ifprint(pcap_if_t *d)
