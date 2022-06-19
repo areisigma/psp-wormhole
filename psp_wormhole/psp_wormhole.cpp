@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <string.h>
 
 #include "pcap.h"
 
@@ -46,10 +47,12 @@ BOOL LoadNpcapDlls()
 }
 
 
+
 // Function prototypes
 void ifprint(pcap_if_t *d);
 char *iptos(u_long in);
 char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen);
+void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data);
 
 
 // Print available devices.
@@ -59,31 +62,27 @@ int main(int argc, char *argv[]) {
 
 	pcap_if_t *alldevs;
 	pcap_if_t *d;
+	pcap_t *aHandle;
+	bpf_program fcode;
+	bpf_u_int32 netmask;
 	char errbuf[PCAP_ERRBUF_SIZE + 1];
 	char source[PCAP_ERRBUF_SIZE + 1];
+	int adapter;
+	int result;
+	int cpid; // Capture child
+	int tpid; // Transmit child
 
 	// Load Npcap and its functions. 
 	if (!LoadNpcapDlls())
 	{
-		fprintf(stderr, "Couldn't load Npcap\n");
+		fprintf(stderr, "[!] Couldn't load Npcap\n");
 		exit(1);
 	}
 
-	printf("Enter the device you want to list:\n"
-		"rpcap://              ==> lists interfaces in the local machine\n"
-		"rpcap://hostname:port ==> lists interfaces in a remote machine\n"
-		"                          (rpcapd daemon must be up and running\n"
-		"                           and it must accept 'null' authentication)\n"
-		"file://foldername     ==> lists all pcap files in the give folder\n\n"
-		"Enter your choice: ");
-
-	fgets(source, PCAP_ERRBUF_SIZE, stdin);
-	source[PCAP_ERRBUF_SIZE] = '\0';
-
-	// Retrieve the interfaces list 
-	if (pcap_findalldevs_ex(source, NULL, &alldevs, errbuf) == -1)
+	/* Retrieve the device list */
+	if (pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
-		fprintf(stderr, "Error in pcap_findalldevs: %s\n", errbuf);
+		fprintf(stderr, "[!] Error in pcap_findalldevs: %s\n", errbuf);
 		exit(1);
 	}
 
@@ -93,13 +92,104 @@ int main(int argc, char *argv[]) {
 		ifprint(d);
 	}
 
-	pcap_freealldevs(alldevs);
+	printf("Choose WLAN adapter: ");
+	scanf_s("%d", &adapter);
+	printf("\nAdapter %d\n", adapter);
 
+	// Chosing adapter
+	d = alldevs;
+	for (; adapter; adapter--)
+	{
+		d = d->next;
+	}
+	printf("%s\n", d->description);
+
+	// Open handle for adapter
+	if ((aHandle = pcap_open_live(d->name,
+								65536,
+								PCAP_OPENFLAG_PROMISCUOUS,
+								1000,
+								errbuf
+	)) == NULL)
+	{
+		fprintf(stderr, "\n[!] Unable to open the adapter.");
+	}
+
+	// Check link layer, supporting only ethernet
+	if (pcap_datalink(aHandle) != DLT_EN10MB)
+	{
+		fprintf(stderr, "\n[!] This program works only on Ethernet networks\n");
+		pcap_freealldevs(alldevs);
+		pcap_close(aHandle);
+		exit(1);
+	}
+
+	// Retrieve mask of selected network adapter
+	if (d->addresses == NULL)
+	{
+		printf("[!] Device struct is NULL, cannot assign netmask");
+		pcap_freealldevs(alldevs);
+		pcap_close(aHandle);
+		exit(1);
+	}
+
+	netmask = ((struct sockaddr_in *)(d->addresses->netmask))->sin_addr.S_un.S_addr;
+	printf("[+] Netmask assigned");
+
+	// Compile the filter
+	if ((result = pcap_compile(aHandle, &fcode, "", 1, netmask)) < 0) //wlan.ssid == PSP_AUCES01421_L_LABOMAT
+	{
+		fprintf(stderr, "\n[!] Error compiling filter: %s\n", pcap_statustostr(result));
+		pcap_freealldevs(alldevs);
+		pcap_close(aHandle);
+		exit(1);
+	}
+
+	// Use the filter
+	if ((result = pcap_setfilter(aHandle, &fcode)) < 0)
+	{
+		fprintf(stderr, "\n[!] Error setting the filter: %s\n", pcap_statustostr(result));
+		pcap_freealldevs(alldevs);
+		pcap_close(aHandle);
+		exit(1);
+	}
+
+
+	// Start capturing
+	pcap_loop(aHandle, 0, packet_handler, NULL);
+
+
+	// Close everything that has to be closed
+	pcap_freealldevs(alldevs);
+	pcap_close(aHandle);
+	system("pause");
 	return 1;
 }
 
 
 
+
+/* Child birth
+pid = fork();
+if(pid != 0)
+	printf("child created");
+*/
+
+
+// Packet handle function; is invoked for every incoming packet
+void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data)
+{
+	struct tm ltime;
+	char timestr[16];
+	u_int ip_len;
+	u_short sport, dport;
+	time_t local_tv_sec;
+
+	(VOID)(param);
+	printf("\nNew packet\n");
+	printf("len: %d\n", header->len);
+	printf("data: %s", pkt_data);
+}
 
 
 // Print all the available information on the given interface 
@@ -107,19 +197,22 @@ void ifprint(pcap_if_t *d)
 {
 	pcap_addr_t *a;
 	char ip6str[128];
+	static int i = 0;
 
 	// Name
-	printf("%s\n", d->name);
+	//printf("%s\n", d->name);
 
-	// Description 
-	if (d->description)
-		printf("\tDescription: %s\n", d->description);
+
+	if (d->description) {
+		printf("[%2d] %s", i, d->description);
+		i++;
+	}
 
 	// Loopback Address
-	printf("\tLoopback: %s\n", (d->flags & PCAP_IF_LOOPBACK) ? "yes" : "no");
+	//printf("\tLoopback: %s\n", (d->flags & PCAP_IF_LOOPBACK) ? "yes" : "no");
 
 	// IP addresses 
-	for (a = d->addresses; a; a = a->next) {
+	/*for (a = d->addresses; a; a = a->next) {
 		printf("\tAddress Family: #%d\n", a->addr->sa_family);
 
 		switch (a->addr->sa_family)
@@ -146,7 +239,7 @@ void ifprint(pcap_if_t *d)
 			printf("\tAddress Family Name: Unknown\n");
 			break;
 		}
-	}
+	}*/
 	printf("\n");
 }
 
