@@ -1,5 +1,5 @@
 # psp-adhoc-proxy
-AdHoc Proxy for PSP connection
+AdHoc Proxy for PSP internet connection
 ##
 ### Requirements
 Npcap 1.60
