@@ -3,7 +3,9 @@ AdHoc Proxy for PSP internet connection
 ##
 ### Requirements
 Npcap 1.60
-  You should install support for raw 802.11 packets.
+  (You should install support for raw 802.11 packets)
+
+.NET Framework 4.5 or later
 ##
 ### Few word of mine, what is a thing I'm working on
 This is my attempt of creating infrastructure through AdHoc. I doing it to play Patapon 3 online.
