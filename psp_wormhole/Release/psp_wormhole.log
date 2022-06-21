@@ -11,8 +11,8 @@ c:\users\olaf\desktop\psp_wormhole\psp_wormhole\psp_wormhole\psp_wormhole.cpp(19
 c:\users\olaf\desktop\psp_wormhole\psp_wormhole\psp_wormhole\psp_wormhole.cpp(237): warning C4101: "a": lokalna zmienna, do której nie istnieje odwołanie
 c:\users\olaf\desktop\psp_wormhole\psp_wormhole\psp_wormhole\psp_wormhole.cpp(238): warning C4101: "ip6str": lokalna zmienna, do której nie istnieje odwołanie
   Trwa generowanie kodu
-  3 of 12 functions (25.0%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  2 of 12 functions (16.7%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Zakończono generowanie kodu
   psp_wormhole.vcxproj -> C:\Users\olaf\Desktop\psp_wormhole\psp_wormhole\Release\psp_wormhole.exe

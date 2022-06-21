@@ -171,7 +171,6 @@ int main(int argc, char *argv[]) {
 	// Start capturing
 	pcap_loop(aHandle, 0, packet_handler, NULL);
 
-
 	// Close everything that has to be closed
 	pcap_freealldevs(alldevs);
 	pcap_close(aHandle);
@@ -200,7 +199,7 @@ void packet_handler(u_char *param, const struct pcap_pkthdr *header, const u_cha
 
 	(VOID)(param);
 	printf("\n\nNew packet\n");
-	printf("len: %d\n", header->len);
+	printf("len: %d\n\t\tdata_len: %d", header->len, sizeof(*pkt_data));
 	dump(pkt_data, sizeof(pkt_data));
 }
 
